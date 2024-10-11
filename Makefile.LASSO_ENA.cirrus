@@ -17,7 +17,7 @@ UTIL_CLUBB      := $(SAM_SCR)/UTIL_CLUBB
 ### Platform independent preprocessor flags (UW Milwaukee ) ###
 # SAM without CLUBB (revert to the original code)
 # CPPFLAGS = -DNETCDF -DUWM_STATS -DUWM_MISC -DPNNL_STATS -DLASSO_ENA
-CPPFLAGS = -DNETCDF -DUWM_MISC -DLASSO_ENA
+CPPFLAGS = -DNETCDF -DUWM_MISC -DLASSO_ENA -DCALC_RADAR_REFL
 # REAL_TYPE is here simply so the user doesn't have to remove the CLUBB external directory
 #CPPFLAGS = -DCLUBB_REAL_TYPE=8 
 

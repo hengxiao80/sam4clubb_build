@@ -9,7 +9,7 @@ setenv SAM_SCR `pwd`
 
 # ----------------------------------
 # specify scalar-advection directory in SRC
-#setenv ADV_DIR ADV_UM5
+# setenv ADV_DIR ADV_UM5
 setenv ADV_DIR ADV_MPDATA
 
 # specify SGS directory in SRC
