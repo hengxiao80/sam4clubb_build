@@ -12,11 +12,12 @@
 SAM = SAM_$(ADV_DIR)_$(SGS_DIR)_$(RAD_DIR)_$(MICRO_DIR)
 
 # For SAM_CLUBB
-UTIL_CLUBB      := $(SAM_SCR)/UTIL_CLUBB
+# UTIL_CLUBB      := $(SAM_SCR)/UTIL_CLUBB
 
 ### Platform independent preprocessor flags (UW Milwaukee ) ###
 # SAM without CLUBB (revert to the original code)
-CPPFLAGS = -DNETCDF -DUWM_STATS -DUWM_MISC -DPNNL_STATS -DBOMEX
+# CPPFLAGS = -DNETCDF -DUWM_STATS -DUWM_MISC -DPNNL_STATS -DHISCALE
+CPPFLAGS = -DNETCDF -DHISCALE -DUWM_MISC
 # REAL_TYPE is here simply so the user doesn't have to remove the CLUBB external directory
 #CPPFLAGS = -DCLUBB_REAL_TYPE=8 
 
@@ -32,7 +33,7 @@ CPPFLAGS = -DNETCDF -DUWM_STATS -DUWM_MISC -DPNNL_STATS -DBOMEX
 ### End platform independent preprocessor flags ###
 
 ### Platform independent files we want warnings on (UW Milwaukee code) ###
-WARNABLE = clubb_sgs.o clubbvars.o clubb_silhs_vars.o stat_clubb.o sgs.o
+# WARNABLE = clubb_sgs.o clubbvars.o clubb_silhs_vars.o stat_clubb.o sgs.o
 ### End platform independent warnings ###
 
 # Determine platform 
@@ -44,20 +45,21 @@ PLATFORM := Cray
 # Cray (on hopper), added by Minghuai Wang (Minghuai.Wang@pnnl.gov)
 #
 ifeq ($(PLATFORM),Cray)
+
 FF90 = ftn -c
-FF77 = ftn -c -ffixed-line-length-132 # perlmutter with gnu compiler
+FF77 = ftn -c
+# FF77 = ftn -c -f fixed -N 132 # perlmutter with gnu compiler
+CC = cc -c -DLINUX
+LD = ftn
+
 # FF77 = ftn -c -extend-source 132 # cori with intel compiler
 # FF77 = ftn -c -Mextend # perlmutter with nvidia compiler
-# FF77 = ftn -c -f fixed -N 132 # perlmutter with gnu compiler
 # CC = pgcc -c -DLINUX
-CC = cc -c -DLINUX
-
-LD = ftn
 
 INC_NETCDF   := $(NETCDF_DIR)/include
 LIB_NETCDF   := $(NETCDF_DIR)/lib
-INC_MPI      := $(MPICH_DIR)/include
-LIB_MPI      := $(MPICH_DIR)/lib
+INC_MPI      := $(CRAY_MPICH_DIR)/include
+LIB_MPI      := $(CRAY_MPICH_DIR)/lib
 
 ##pgi compiler
 #FFLAGS =  -DNO_R16 -i4 -Mdalign -Mextend -byteswapio
@@ -72,9 +74,13 @@ LIB_MPI      := $(MPICH_DIR)/lib
 ##intel compiler
 #FFLAGS = -debug full -CB -g -traceback -check bounds -check uninit -ftrapuv
 
-FFLAGS = -O3
+# FFLAGS = -w -fallow-argument-mismatch -fbacktrace -fcheck=all -Wall -Wextra -g -O0
+FFLAGS = -w -fallow-argument-mismatch -O3
 
 ##FFLAGS += -r8
+
+# FFLAGS = -O3 -N 255 -e E
+# FFLAGS = -O0 -g
 
 # for SAM_CLUBB (noCLUBB)
 FFLAGS += -I${INC_MPI} -I${INC_NETCDF} ${CPPFLAGS}
@@ -93,7 +99,7 @@ LDFLAGS = -L${LIB_MPI} -L${LIB_NETCDF} -lnetcdf
 
 #  LDFLAGS += -L${ACML} -Wl,-rpath,${ACML} -lacml_mp -lacml_mv
 #  LDFLAGS += -L${ACML} -Wl,-rpath,${ACML} -lacml_mp
-LDFLAGS += -mkl ## mwswong: intel compiler
+# LDFLAGS += -mkl ## mwswong: intel compiler
 # CFLAGS += -mkl
 ###---mhwang
 endif
