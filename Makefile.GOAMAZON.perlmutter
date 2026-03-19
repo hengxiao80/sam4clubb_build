@@ -16,7 +16,7 @@ SAM = SAM_$(ADV_DIR)_$(SGS_DIR)_$(RAD_DIR)_$(MICRO_DIR)
 
 ### Platform independent preprocessor flags (UW Milwaukee ) ###
 # SAM without CLUBB (revert to the original code)
-CPPFLAGS = -DNETCDF -DUWM_STATS -DUWM_MISC -DPNNL_STATS -DBOMEX
+CPPFLAGS = -DNETCDF -DUWM_MISC -DGOAMAZON
 # REAL_TYPE is here simply so the user doesn't have to remove the CLUBB external directory
 #CPPFLAGS = -DCLUBB_REAL_TYPE=8 
 
@@ -48,7 +48,6 @@ FF90 = ftn -c
 FF77 = ftn -c -ffixed-line-length-132 # perlmutter with gnu compiler
 # FF77 = ftn -c -extend-source 132 # cori with intel compiler
 # FF77 = ftn -c -Mextend # perlmutter with nvidia compiler
-# FF77 = ftn -c -f fixed -N 132 # perlmutter with gnu compiler
 # CC = pgcc -c -DLINUX
 CC = cc -c -DLINUX
 
@@ -64,19 +63,15 @@ LIB_MPI      := $(MPICH_DIR)/lib
 ##pgi compiler
 #FFLAGS =  -DNO_R16 -i4 -Mdalign -Mextend -byteswapio
 #FFLAGS =  -DNO_R16 -i4 -Mdalign -Mextend
-
 ## flags for debug
 # FFLAGS += -g -Ktrap=fp -Mbounds -Kieee
 
-# FFLAGS += -O0 -g
-
-##intel compiler
+##intel compiler debug
 #FFLAGS = -debug full -CB -g -traceback -check bounds -check uninit -ftrapuv
 
-FFLAGS = -O3
-FFLAGS += -fallow-argument-mismatch # perlmutter with gnu compiler
-
-##FFLAGS += -r8
+## gnu compiler debug
+# FFLAGS += -O0 -g -ffpe-trap=invalid,zero -fbacktrace -fbounds-check -finit-real=zero -O -fcheck=all
+FFLAGS = -O3 -finit-real=zero -finit-integer=zero -fallow-argument-mismatch # perlmutter with gnu compiler
 
 # for SAM_CLUBB (noCLUBB)
 FFLAGS += -I${INC_MPI} -I${INC_NETCDF} ${CPPFLAGS}
